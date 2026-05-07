@@ -126,7 +126,7 @@ export default function Chats() {
         {assistantloader && (
           <div className="flex text-xs text-amber-950 font-mono font-extrabold gap-2 ">
             <Loader size={20} className="animate-spin text-amber-950" />{" "}
-            <p className="opacity-50">blox ix thinking</p>
+            <p className="opacity-50">blox is thinking</p>
           </div>
         )}
         <div ref={bottomRef} />
