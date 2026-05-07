@@ -1,26 +1,94 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* :root { */
+  /* --background: #ffffff; */
+  /* --foreground: #171717; */
+/* } */
+/*  */
+/* @theme inline { */
+  /* --color-background: var(--background); */
+  /* --color-foreground: var(--foreground); */
+  /* --font-sans: var(--font-geist-sans); */
+  /* --font-mono: var(--font-geist-mono); */
+/* } */
+/*  */
+/* @media (prefers-color-scheme: dark) { */
+  /* :root { */
+    /* --background: #0a0a0a; */
+    /* --foreground: #ededed; */
+  /* } */
+/* } */
+/*  */
+/* body { */
+  /* background: var(--background); */
+  /* color: var(--foreground); */
+  /* font-family: Arial, Helvetica, sans-serif; */
+/* } */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1f1a14 transparent; /* amber-950 (#1f1a14) thumb, transparent track */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Webkit: Chrome/Safari/Edge - Thin, no bg, no arrows */
+*::-webkit-scrollbar {
+  width: 6px; /* Super thin */
+  height: 6px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+*::-webkit-scrollbar-track {
+  background: transparent; /* No background */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #1f1a14; /* amber-950 */
+  border-radius: 3px;
+  border: none; /* No border */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #331f00; /* Slightly lighter amber on hover */
+}
+
+*::-webkit-scrollbar-button {
+  display: none; /* Hide upper/lower arrows */
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.fade-out-element {
+  animation: bounceFadeIn 600ms ease-out forwards;
+}
+
+@keyframes bounceFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
+  80% {
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.flutting {
+  animation: flutting 2s ease-in-out infinite;
+}
+
+@keyframes flutting {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
