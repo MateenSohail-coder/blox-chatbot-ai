@@ -158,7 +158,7 @@ const Sidebar = ({ className }) => {
           {isOpen && (
             <div
               ref={topRef}
-              className="space-y-2 mt-5 border-t-1 h-[40%] flex flex-col  border-t-amber-200 pt-5 overflow-y-auto"
+              className="space-y-2 mt-5 border-t-1 h-[35%] flex flex-col  border-t-amber-200 pt-5 overflow-y-auto"
             >
               {conversation.map((item, index) => (
                 <Link href={`/dashboard/Chats/${item._id}`} key={index}>
