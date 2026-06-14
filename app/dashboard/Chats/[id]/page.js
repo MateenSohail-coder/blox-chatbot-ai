@@ -265,7 +265,7 @@ export default function ChatPage() {
   const isLoadingFromDB = messages === null;
 
   return (
-    <div className="absolute h-screen inset-0 flex flex-col justify-between bg-background text-foreground dark:bg-black">
+    <div className="absolute overflow-hidden max-h-screen inset-0 flex flex-col justify-between bg-background text-foreground dark:bg-black">
       {/* Scrollable Container */}
       <ScrollArea ref={scrollRef} className="flex-1 h-[calc(100vh-140px)]">
         <div className="w-screen md:w-full  mx-auto px-3 sm:px-4 py-6 pb-15">

@@ -102,8 +102,6 @@ export default function NewChat() {
           <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-400 dark:via-blue-500 dark:to-cyan-300 drop-shadow-[0_2px_10px_rgba(37,99,235,0.15)]">
             {user?.username || "there"}
 
-            {/* Underline glow effect */}
-            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-gradient-to-r from-blue-600/0 via-blue-500/50 to-cyan-500/0" />
           </span>
           <span className="text-blue-600 dark:text-blue-400 animate-pulse">
             _
