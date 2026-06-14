@@ -8,7 +8,7 @@ import {
 
 export default function DashboardLayout({ children }) {
   return (
-    <SidebarProvider className="h-screen">
+    <SidebarProvider className="min-h-dvh">
       <AppSidebar />
       <SidebarInset className="h-screen relative overflow-hidden flex flex-col bg-background dark:bg-black">
         <header className="flex shrink-0 items-center gap-2 border-b border-border px-4 dark:border-neutral-900 justify-between h-14">
