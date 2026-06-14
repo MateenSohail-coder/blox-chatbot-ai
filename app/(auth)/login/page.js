@@ -13,6 +13,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { UseAuth } from "@/context/AuthContext";
+import { ArrowLeftCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Stagger animation container config
 const containerVariants = {
@@ -90,7 +96,23 @@ export default function Login() {
         transition={{ type: "spring", duration: 0.5 }}
         className="w-full max-w-4xl z-10"
       >
-        <Card className="w-full overflow-hidden p-0 shadow-2xl border border-border bg-card/80 backdrop-blur-md">
+        <Card className="w-full relative overflow-hidden p-0 shadow-2xl  border-2 md:border-4 border-blue-600 bg-card/80 backdrop-blur-md">
+          <Tooltip asChild>
+            <TooltipTrigger asChild>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: "spring", duration: 0.5 }}
+                className="absolute top-5 left-5 cursor-pointer active:scale-[0.96]"
+              >
+                <Link href="/">
+                  <ArrowLeftCircle className="text-blue-600 w-8 h-8" />
+                </Link>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>Home</TooltipContent>
+          </Tooltip>
+
           <CardContent className="grid p-0 md:grid-cols-2">
             {/* Left Column: Interactive Form */}
             <form

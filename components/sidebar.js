@@ -92,6 +92,7 @@ export function AppSidebar() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [renameText, setRenameText] = useState("");
   const [dialogeLoader, setdialogeLoader] = useState(false);
+  const [confirmDialog, setconfirmDialog] = useState(false);
   // Fetch conversations
   useEffect(() => {
     setIsLoading(true);
@@ -397,7 +398,7 @@ export function AppSidebar() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={logout}
+              onClick={() => setconfirmDialog(true)}
               className="flex items-center gap-2 rounded-xs px-2 py-2 text-base text-destructive hover:bg-destructive/10 cursor-pointer"
             >
               <LogOut size={14} />
@@ -406,7 +407,43 @@ export function AppSidebar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>
-
+      <Dialog open={confirmDialog} onOpenChange={setconfirmDialog}>
+        <DialogContent className=" bg-background text-foreground border border-border rounded-sm shadow-2xl max-w-sm dark:bg-zinc-950 dark:border-neutral-800">
+          <DialogHeader>
+            <DialogTitle className=" text-base text-foreground">
+              Are you Sure to Logout ?{" "}
+            </DialogTitle>
+            <DialogDescription className="text-base text-muted-foreground mt-1"></DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 mt-3 rounded-b-none">
+            <Button
+              variant="outline"
+              onClick={() => setconfirmDialog(false)}
+              className="rounded-sm border border-border text-muted-foreground hover:text-foreground text-base h-10"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={logout}
+              variant="destructive"
+              disabled={dialogeLoader}
+              className="rounded-sm text-base disabled:opacity-20 h-10"
+            >
+              {dialogeLoader ? (
+                <div className="flex text-sm items-center gap-1">
+                  <Loader className="text-black h-20 w-20 spin-in" />{" "}
+                  loading{" "}
+                </div>
+              ) : (
+                <div className="flex text-sm items-center gap-1">
+                  <Trash2 size={14} className="mr-1.5" />
+                  Confirm
+                </div>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* ── Delete Dialog ────────────────────────────────────────────────── */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className=" bg-background text-foreground border border-border rounded-sm shadow-2xl max-w-sm dark:bg-zinc-950 dark:border-neutral-800">
