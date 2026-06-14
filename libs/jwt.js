@@ -10,3 +10,10 @@ export async function verifytoken(token) {
   const { payload } = await jwtVerify(token, secret);
   return payload;
 }
+export async function updatetoken(oldToken, updates) {
+  const payload = await verifytoken(oldToken);
+  const newPayload = { ...payload, ...updates };
+  delete newPayload.iat;
+  delete newPayload.exp;
+  return await signtoken(newPayload);
+}

@@ -1,5 +1,7 @@
-import { gettoken } from "@/libs/cookies";
-import { verifytoken } from "@/libs/jwt";
+import { gettoken, setcookies } from "@/libs/cookies";
+import { ConnectDB } from "@/libs/db";
+import { updatetoken, verifytoken } from "@/libs/jwt";
+import User from "@/models/User";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -16,4 +18,34 @@ export async function GET(req) {
     userId: data.userid,
     userEmail: data.email,
   });
+}
+export async function PUT(req) {
+  const token = await gettoken(req);
+
+  await ConnectDB();
+  const { _id, username } = await req.json();
+
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    { username },
+    { new: true }, // returns the modified document
+  );
+
+  if (!updatedUser) {
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
+  }
+
+  const newToken = await updatetoken(token, { username });
+
+  const res = NextResponse.json(
+    {
+      message: "Username updated successfully",
+      conversation: updatedUser,
+    },
+    { status: 200 },
+  );
+
+  await setcookies(newToken, res);
+
+  return res;
 }

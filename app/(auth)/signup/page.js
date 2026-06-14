@@ -4,130 +4,274 @@ import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { motion } from "motion/react";
+import { UseAuth } from "@/context/AuthContext";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 24 },
+  },
+};
 
 export default function Signup() {
   const [loader, setloader] = useState(false);
-  const [mes, setmes] = useState(false);
-  const [sucess, setsucess] = useState("");
-  const [error, seterror] = useState("");
+  const router = useRouter();
+  const { setloaduserdata } = UseAuth();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    mode: "onChange", // Errors show as you type!
+    mode: "onChange",
   });
+
   async function submit(data) {
     setloader(true);
     try {
       const res = await axios.post("/api/auth/signup", data);
-      setsucess(res.data.message);
-      setmes(true);
-      window.location.href = "/dashboard/Chats";
+      toast.success("Success!", {
+        description: res.data.message || "Account created successfully.",
+      });
+      setloaduserdata((pre) => pre + 1);
+      router.push("/dashboard/Chats");
     } catch (err) {
-      seterror(err.response?.data?.message || "something went wrong !");
-      setmes(true);
+      const errorMsg = err.response?.data?.message || "Something went wrong!";
+      toast.error("Error", { description: errorMsg });
+      reset();
     } finally {
       setloader(false);
-      if (error) {
-        reset();
-      }
-      setTimeout(() => {
-        setmes(false);
-        seterror("");
-        setsucess("");
-      }, 5000);
     }
   }
+
   return (
-    <div className="min-h-screen w-full overflow-auto flex items-center justify-center bg-amber-200 ">
-      <form
-        onSubmit={handleSubmit(submit)}
-        className="p-4 md:p-10 fade-out-element flex flex-col gap-4 border-4 md:border-8 border-amber-950 rounded-2xl m-3"
+    <div className="relative min-h-screen md:border-20 border-blue-600 w-full flex items-center justify-center p-4 overflow-hidden">
+      {/* Decorative floating background elements */}
+      <motion.div
+        animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/4 right-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"
+      />
+      <motion.div
+        animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.5,
+        }}
+        className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"
+      />
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className="w-full max-w-4xl z-10"
       >
-        <h1 className="text-xl md:text-3xl bg-amber-950 text-amber-200 p-2 md:p-3 font-mono font-extrabold rounded-2xl flex items-center justify-center ">
-          SignUp Here ⬇
-        </h1>
-        <input
-          {...register("username", {
-            required: " ⚠ User name is required",
-            maxLength: {
-              value: 20,
-              message: " ⚠ username must be under 20 charaters",
-            },
-            minLength: {
-              value: 4,
-              message: " ⚠ username must be above 4 characters",
-            },
-          })}
-          className="text-lg md:text-3xl p-2 md:p-3 font-extrabold font-mono border-2 md:border-4 border-amber-950 text-amber-950 focus:outline-none focus:ring-0 border-t-transparent border-r-transparent border-l-transparent "
-        />
-        <p className="bg-amber-950 text-amber-300 text-xs md:text-sm font-mono font-extrabold rounded-4xl p-1 px-4">
-          {errors.username?.message}
-        </p>
-        <input
-          type="email"
-          {...register("email", {
-            required: "⚠ email is required",
-          })}
-          className="text-lg md:text-3xl p-2 md:p-3 font-extrabold font-mono border-2 md:border-4 border-amber-950 text-amber-950 focus:outline-none focus:ring-0 border-t-transparent border-r-transparent border-l-transparent "
-        />
-        <p className="bg-amber-950 text-amber-300 text-xs md:text-sm font-mono font-extrabold rounded-4xl p-1 px-4">
-          {errors.email?.message}
-        </p>
-        <input
-          {...register("password", {
-            required: " ⚠ password is required",
-            maxLength: {
-              value: 15,
-              message: " ⚠ password must be under 15 characters",
-            },
-            pattern: {
-              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-              message: " ⚠ Must include uppercase, lowercase, and a number",
-            },
-            minLength: {
-              value: 8,
-              message: " ⚠ password must be above 8 charaters",
-            },
-          })}
-          className="text-lg md:text-3xl p-2 md:p-3 font-extrabold font-mono border-2 md:border-4 border-amber-950 text-amber-950 focus:outline-none focus:ring-0 border-t-transparent border-r-transparent border-l-transparent "
-        />
-        <p className="bg-amber-950 text-amber-300 text-xs md:text-sm font-mono font-extrabold rounded-4xl p-1 px-4">
-          {errors.password?.message}
-        </p>
-        <p className="bg-amber-950 text-amber-100 text-xs font-mono font-extrabold rounded-4xl p-1 px-4">
-          ALready Have an account ?{" "}
-          <Link href="/login" className="underline hover:text-amber-200">
-            Login Here
-          </Link>
-        </p>
-        <button
-          style={{
-            cursor: loader ? "not-allowed" : "pointer",
-          }}
-          type="submit"
-          className="w-full bg-amber-950 text-amber-200 font-mono flex items-center justify-center font-extrabold text-xl md:text-3xl rounded-2xl border-2 md:border-4 border-amber-950 transition-all p-2 md:p-4 hover:bg-amber-200 hover:text-amber-950 active:bg-amber-200 active:text-amber-950 active:scale-[0.96] "
-        >
-          {loader ? (
-            <div className="sppiner h-10 w-10 border-4 border-dotted rounded-full border-amber-700 border-t-amber-200 transition-all animate-spin"></div>
-          ) : (
-            "Submit"
-          )}
-        </button>
-        {mes ? (
-          error ? (
-            <div className="error-class transition-all opacity-70 rounded-2xl border-2 border-white bg-red-700 text-sx p-3 font-mono font-extrabold ">
-              {error}
+        <Card className="w-full overflow-hidden p-0 shadow-2xl border border-border bg-card/80 backdrop-blur-md">
+          <CardContent className="grid p-0 md:grid-cols-2">
+            {/* Left Column: Form */}
+            <form
+              onSubmit={handleSubmit(submit)}
+              className="p-6 md:p-10 flex flex-col justify-center gap-6"
+            >
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-4"
+              >
+                <motion.div
+                  variants={itemVariants}
+                  className="flex flex-col items-center gap-2 text-center mb-1"
+                >
+                  <h1 className="text-3xl font-extralight font-Gasoek bg-gradient-to-r from-blue-600 to-foreground/70 bg-clip-text text-transparent">
+                    Create an account
+                  </h1>
+                  <p className="text-sm text-muted-foreground text-balance">
+                    Enter your details below to get started
+                  </p>
+                </motion.div>
+
+                {/* Username Field */}
+                <motion.div variants={itemVariants} className="grid gap-1.5">
+                  <Label
+                    htmlFor="username"
+                    className={errors.username ? "text-destructive" : ""}
+                  >
+                    Username
+                  </Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="johndoe"
+                    disabled={loader}
+                    className={`transition-all duration-200 ${
+                      errors.username
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : "focus-visible:ring-primary/50"
+                    }`}
+                    {...register("username", {
+                      required: " User name is required",
+                      maxLength: {
+                        value: 20,
+                        message: " Username must be under 20 characters",
+                      },
+                      minLength: {
+                        value: 4,
+                        message: " Username must be above 4 characters",
+                      },
+                    })}
+                  />
+                  {errors.username && (
+                    <p className="text-xs font-medium text-destructive">
+                      {errors.username.message}
+                    </p>
+                  )}
+                </motion.div>
+
+                {/* Email Field */}
+                <motion.div variants={itemVariants} className="grid gap-1.5">
+                  <Label
+                    htmlFor="email"
+                    className={errors.email ? "text-destructive" : ""}
+                  >
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="aliahmad@gmail.com"
+                    disabled={loader}
+                    className={`transition-all duration-200 ${
+                      errors.email
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : "focus-visible:ring-primary/50"
+                    }`}
+                    {...register("email", { required: " Email is required" })}
+                  />
+                  {errors.email && (
+                    <p className="text-xs font-medium text-destructive">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </motion.div>
+
+                {/* Password Field */}
+                <motion.div variants={itemVariants} className="grid gap-1.5">
+                  <Label
+                    htmlFor="password"
+                    className={errors.password ? "text-destructive" : ""}
+                  >
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    disabled={loader}
+                    placeholder="******"
+                    className={`transition-all duration-200 ${
+                      errors.password
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : "focus-visible:ring-primary/50"
+                    }`}
+                    {...register("password", {
+                      required: " Password is required",
+                      maxLength: {
+                        value: 15,
+                        message: " Password must be under 15 characters",
+                      },
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+                        message:
+                          " Must include uppercase, lowercase, and a number",
+                      },
+                      minLength: {
+                        value: 8,
+                        message: " Password must be above 8 characters",
+                      },
+                    })}
+                  />
+                  {errors.password && (
+                    <p className="text-xs font-medium text-destructive">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </motion.div>
+
+                {/* Submit Button */}
+                <motion.div
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  <Button
+                    type="submit"
+                    className="w-full mt-2 bg-blue-600 text-white hover:bg-blue-500"
+                    disabled={loader}
+                  >
+                    {loader ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Sign Up"
+                    )}
+                  </Button>
+                </motion.div>
+
+                {/* Link to Login */}
+                <motion.p
+                  variants={itemVariants}
+                  className="text-sm text-center text-muted-foreground mt-1"
+                >
+                  Already have an account?{" "}
+                  <Link
+                    href="/login"
+                    className="underline underline-offset-4 hover:text-primary transition-colors"
+                  >
+                    Login Here
+                  </Link>
+                </motion.p>
+              </motion.div>
+            </form>
+
+            {/* Right Column: Decorative Image Split */}
+            <div className="relative hidden bg-muted md:block overflow-hidden">
+              <motion.img
+                initial={{ scale: 1.1, opacity: 0.8 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                src="https://i.pinimg.com/736x/8d/48/32/8d4832f91daa5b3eefb01e238e719288.jpg"
+                alt="Signup Background Image"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
-          ) : (
-            <div className="success-class rounded-2xl opacity-70 border-2 border-white transition-all  bg-green-700 text-sx p-3 font-mono font-extrabold ">
-              {sucess}
-            </div>
-          )
-        ) : null}
-      </form>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }

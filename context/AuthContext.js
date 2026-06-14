@@ -8,8 +8,11 @@ export function AuthProvider({ children }) {
   const [user, setuser] = useState({});
   const [conversation, setConversation] = useState([]);
   const [trigger, settrigger] = useState(1);
+  const [trigger2, settrigger2] = useState(1);
   const [userloader, setuserloader] = useState(false);
+  const [loadUsername, setloadUsername] = useState(0);
   const [conversationLoader, setconversationLoader] = useState(false);
+  const [loaduserdata, setloaduserdata] = useState(0);
   useEffect(() => {
     async function GetUserInfo() {
       setuserloader(true);
@@ -29,7 +32,7 @@ export function AuthProvider({ children }) {
     }
 
     GetUserInfo();
-  }, []);
+  }, [loadUsername, loaduserdata]);
   async function logout() {
     try {
       await axios.post("/api/auth/logout");
@@ -55,11 +58,38 @@ export function AuthProvider({ children }) {
       setconversationLoader(false);
     }
   }
+  async function DeleteConversation(conId) {
+    try {
+      const res = await axios.delete(`/api/Conversation?conId=${conId}`);
+      return res.data.message;
+    } catch (error) {
+      return error.response.message;
+    }
+  }
+  async function UpdateConversation(conId, title) {
+    try {
+      const res = await axios.put("/api/Conversation", {
+        conversation_id: conId,
+        title: title,
+      });
+      return res.data.message;
+    } catch (error) {
+      return error.response.message;
+    }
+  }
+  async function UpdateUsername(UserId, Username) {
+    try {
+      const res = await axios.put("/api/auth/me", {
+        _id: UserId,
+        username: Username,
+      });
+      return res.data.message;
+    } catch (error) {
+      return error.response.message;
+    }
+  }
   function reloadData() {
-    settrigger((pre) => {
-      console.log("Trigger updated:", pre + 1);
-      return pre + 1;
-    });
+    settrigger((pre) => pre + 1);
   }
 
   return (
@@ -68,11 +98,21 @@ export function AuthProvider({ children }) {
         user,
         GetConversations,
         reloadData,
+        loadUsername,
+        setloadUsername,
+        DeleteConversation,
+        UpdateConversation,
         trigger,
+        UpdateUsername,
+        settrigger,
+        trigger2,
+        settrigger2,
         conversation,
         logout,
         userloader,
         conversationLoader,
+        loaduserdata,
+        setloaduserdata,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import { ConnectDB } from "@/libs/db";
 import Conversation from "@/models/Conversation";
+import Messages from "@/models/Messages";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -40,6 +41,7 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Conv ID required" }, { status: 400 });
     }
     await Conversation.deleteOne({ _id: conversationId });
+    await Messages.deleteMany({ conversation_id: conversationId });
     return NextResponse.json(
       { message: "successfully deleted" },
       { status: 200 },
@@ -47,4 +49,29 @@ export async function DELETE(req) {
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+export async function PUT(req) {
+  await ConnectDB();
+  const { conversation_id, title } = await req.json();
+
+  const updatedConversation = await Conversation.findByIdAndUpdate(
+    conversation_id,
+    { title },
+    { new: true }, // Returns the modified document instead of the original
+  );
+
+  if (!updatedConversation) {
+    return NextResponse.json(
+      { message: "Conversation not found" },
+      { status: 404 },
+    );
+  }
+
+  return NextResponse.json(
+    {
+      message: "Conversation updated successfully",
+      conversation: updatedConversation,
+    },
+    { status: 200 },
+  );
 }

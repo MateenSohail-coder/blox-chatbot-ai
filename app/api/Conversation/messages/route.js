@@ -40,40 +40,65 @@ export async function POST(req) {
     { status: 200 },
   );
 }
+// ---------------------------------------------------------------------------
+// GET /api/Conversation/messages?conversation_id=<id>
+// Returns all messages for a conversation, ordered oldest → newest.
+// ---------------------------------------------------------------------------
 export async function GET(req) {
   try {
     await ConnectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("conversation_id");
-    if (!id) {
+
+    if (!id?.trim()) {
       return NextResponse.json(
-        { error: "conversation Id is required" },
+        { error: "conversation_id is required" },
         { status: 400 },
       );
     }
-    const messages = await Messages.find({ conversation_id: id });
-    return NextResponse.json({ messages });
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const messages = await Messages.find({ conversation_id: id })
+      .sort({ created_at: 1 })
+      .lean();
+
+    return NextResponse.json({ messages }, { status: 200 });
+  } catch (err) {
+    console.error("[GET /messages]", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
+
+// ---------------------------------------------------------------------------
+// DELETE /api/Conversation/messages?conversation_id=<id>
+// Deletes all messages belonging to a conversation.
+// ---------------------------------------------------------------------------
 export async function DELETE(req) {
   try {
     await ConnectDB();
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("conversaton_id");
-    if (!id) {
+    const id = searchParams.get("conversation_id");
+
+    if (!id?.trim()) {
       return NextResponse.json(
-        { error: "conversation Id is required" },
+        { error: "conversation_id is required" },
         { status: 400 },
       );
     }
-    await Messages.deleteMany({ conversation_id: id });
+
+    const result = await Messages.deleteMany({ conversation_id: id });
+
     return NextResponse.json(
-      { message: "messages deleted successfully" },
+      { message: "Messages deleted", deleted: result.deletedCount },
       { status: 200 },
     );
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error("[DELETE /messages]", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
