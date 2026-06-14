@@ -265,7 +265,7 @@ export default function ChatPage() {
   const isLoadingFromDB = messages === null;
 
   return (
-    <div className="relative h-screen  inset-0 flex flex-col justify-between bg-background text-foreground dark:bg-black">
+    <div className="absolute h-screen inset-0 flex flex-col justify-between bg-background text-foreground dark:bg-black">
       {/* Scrollable Container */}
       <ScrollArea ref={scrollRef} className="flex-1 h-[calc(100vh-140px)]">
         <div className="w-screen md:w-full  mx-auto px-3 sm:px-4 py-6 pb-15">
@@ -299,7 +299,7 @@ export default function ChatPage() {
       </ScrollArea>
 
       {/* Floating ChatGPT / Gemini Style Deck */}
-      <div className="w-full relative bottom-[12%] right-0  mx-auto px-4 pb-6 pt-3 bg-gradient-to-t from-background via-background/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent shrink-0 backdrop-blur-sm">
+      <div className="w-full sticky bottom-0 mx-auto px-4 pb-6 pt-3 bg-gradient-to-t from-background via-background/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent shrink-0 backdrop-blur-sm">
         <div className="relative flex flex-col gap-2 md:w-[80%] mx-auto border border-neutral-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-900/90 focus-within:ring-2 focus-within:ring-blue-500/40 focus-within:border-blue-500 transition-all p-2 shadow-xl hover:shadow-2xl">
           {/* Top Section: Wrapped in Shadcn ScrollArea */}
           <div className="flex items-end gap-3 w-full pl-2 pr-1 pt-1">
