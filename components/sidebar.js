@@ -73,7 +73,6 @@ const NAV_ITEMS = [
 // ─── Component ───────────────────────────────────────────────────────────────
 export function AppSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const {
     user,
@@ -93,6 +92,8 @@ export function AppSidebar() {
   const [renameText, setRenameText] = useState("");
   const [dialogeLoader, setdialogeLoader] = useState(false);
   const [confirmDialog, setconfirmDialog] = useState(false);
+  const router = useRouter();
+
   // Fetch conversations
   useEffect(() => {
     setIsLoading(true);
@@ -114,6 +115,7 @@ export function AppSidebar() {
     settrigger2((pre) => pre + 1);
     setDeleteDialogOpen(false);
     setSelectedChat(null);
+    router.push("/dashboard/Chats");
   };
 
   // ── Rename ────────────────────────────────────────────────────────────────
